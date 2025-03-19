@@ -1,5 +1,5 @@
-import { getPokemon } from "../../lib/api";
-import PokemonList from "../../components/Pokemonlist";
+import { getPokemon } from "../lib/api";
+import PokemonList from "../components/Pokemonlist";
 
 export default async function PokemonPage() {
     const pokemonList = await getPokemon(); // Obtener Pokémon de la API
