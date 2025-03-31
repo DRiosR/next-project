@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
-import { NextResponse } from "next/server"; // Asegúrate de importar NextResponse
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
@@ -32,7 +32,7 @@ export async function POST(req) {
     const hashedPassword = await bcrypt.hash(contraseña, 10);
 
     // Guardar usuario en la base de datos
-    const nuevoUsuario = await prisma.usuario.create({
+    await prisma.usuario.create({
       data: {
         nombre,
         correo,
@@ -40,16 +40,8 @@ export async function POST(req) {
       },
     });
 
-    // Utilizar la variable nuevoUsuario para devolver más detalles si lo deseas
-    return NextResponse.json({
-      message: "Usuario registrado exitosamente",
-      usuario: {
-        id: nuevoUsuario.id,
-        nombre: nuevoUsuario.nombre,
-        correo: nuevoUsuario.correo,
-      },
-    }, { status: 201 });
-  } catch (error) {
+    return NextResponse.json({ message: "Usuario registrado exitosamente" }, { status: 201 });
+  } catch (err) {
     return NextResponse.json({ error: "Error al registrar usuario" }, { status: 500 });
   }
 }
