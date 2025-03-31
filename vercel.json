@@ -1,0 +1,32 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "src/app/api/**/*.js",
+        "use": "@vercel/node"
+      },
+      {
+        "src": "src/**/*.{js,ts}",
+        "use": "@vercel/node"
+      }
+    ],
+    "env": {
+      "DATABASE_URL": "postgres://rios:matraka@bdMathQuest:5432/mathquest"
+    },
+    "build": {
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "commands": {
+        "install": "npm install",
+        "build": "npm run build && npx prisma generate"
+      }
+    },
+    "routes": [
+      {
+        "src": "/api/(.*)",
+        "dest": "/src/app/api/$1"
+      }
+    ]
+  }
+  
