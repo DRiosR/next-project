@@ -1,47 +1,51 @@
-import prisma from "@/lib/prisma";
-import bcrypt from "bcrypt";
-import { NextResponse } from "next/server";
+import bcrypt from 'bcrypt';
+import { PrismaClient } from '@prisma/client';
 
-export async function POST(req) {
-  try {
-    const { nombre, correo, contraseña } = await req.json();
+const prisma = new PrismaClient();
 
-    // Validar que los campos no estén vacíos
-    if (!nombre || !correo || !contraseña) {
-      return NextResponse.json({ error: "Todos los campos son obligatorios" }, { status: 400 });
+const register = async (req, res) => {
+  if (req.method === 'POST') {
+    try {
+      // Desestructurar datos de la solicitud
+      const { username, email, password } = req.body;
+
+      // Verificar que los campos no estén vacíos
+      if (!username || !email || !password) {
+        return res.status(400).json({ message: 'Todos los campos son requeridos' });
+      }
+
+      // Verificar si el usuario o correo ya existen
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (existingUser) {
+        return res.status(400).json({ message: 'El correo ya está registrado' });
+      }
+
+      // Encriptar la contraseña antes de guardarla
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Crear un nuevo usuario
+      const newUser = await prisma.user.create({
+        data: {
+          username: username,
+          email: email,
+          password: hashedPassword,
+        },
+      });
+
+      return res.status(201).json({ message: 'Usuario registrado exitosamente' });
+    } catch (error) {
+      // Capturar el error y devolver un mensaje genérico
+      return res.status(500).json({ message: 'Error en el registro del usuario' });
     }
-
-    // Validar formato de correo electrónico
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correo)) {
-      return NextResponse.json({ error: "Correo electrónico no válido" }, { status: 400 });
-    }
-
-    // Validar longitud de la contraseña
-    if (contraseña.length < 6) {
-      return NextResponse.json({ error: "La contraseña debe tener al menos 6 caracteres" }, { status: 400 });
-    }
-
-    // Verificar si el usuario ya existe
-    const usuarioExistente = await prisma.usuario.findUnique({ where: { correo } });
-    if (usuarioExistente) {
-      return NextResponse.json({ error: "El correo ya está registrado" }, { status: 400 });
-    }
-
-    // Hashear la contraseña antes de guardarla
-    const hashedPassword = await bcrypt.hash(contraseña, 10);
-
-    // Guardar usuario en la base de datos
-    await prisma.usuario.create({
-      data: {
-        nombre,
-        correo,
-        contraseña: hashedPassword,
-      },
-    });
-
-    return NextResponse.json({ message: "Usuario registrado exitosamente" }, { status: 201 });
-  } catch (err) {
-    return NextResponse.json({ error: "Error al registrar usuario" }, { status: 500 });
+  } else {
+    // Si el método no es POST
+    return res.status(405).json({ message: 'Método no permitido' });
   }
-}
+};
+
+export default register;
