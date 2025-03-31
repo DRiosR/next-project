@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  # Backend de la aplicación
+  mathquest-back:
+    build: ./ # Ruta donde se encuentra el Dockerfile de tu backend (si tienes uno)
+    ports:
+      - "3000:3000"  # Puerto donde se expone la aplicación
+    networks:
+      - mathquest-net
+    depends_on:
+      - bdMathQuest  # Asegura que la base de datos se inicie antes del backend
+    restart: unless-stopped  # Reinicia el contenedor en caso de fallo
+
+  # Contenedor de la base de datos PostgreSQL
+  bdMathQuest:
+    image: postgres:alpine  # Usando la imagen de PostgreSQL
+    environment:
+      POSTGRES_USER: rios  # Usuario de la base de datos
+      POSTGRES_PASSWORD: matraka  # Contraseña del usuario
+      POSTGRES_DB: mathquest  # Nombre de la base de datos (MathQuest)
+    ports:
+      - "5432:5432"  # Mapea el puerto de PostgreSQL
+    networks:
+      - mathquest-net  # Red a la que se conecta la base de datos
+    volumes:
+      - bd:/var/lib/postgresql/data  # Persistencia de datos
+    restart: unless-stopped  # Reinicia el contenedor en caso de fallo
+
+volumes:
+  bd:
+    driver: local  # Volumen local para la persistencia de datos
+
+networks:
+  mathquest-net:  # Red dedicada a la aplicación y base de datos
+    driver: bridge  # Utiliza el driver 'bridge' para conectar los contenedores
