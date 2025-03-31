@@ -1,12 +1,13 @@
 {
     "builds": [
       {
-        "src": "next.config.ts",
+        "src": "package.json",
         "use": "@vercel/node"
       }
     ],
     "env": {
-      "DATABASE_URL": "postgresql://rios:matraka@localhost:5432/mathquest"
+      "NODE_ENV": "production",
+      "DATABASE_URL": "postgresql://rios:matraka@bdMathQuest:5432/mathquest" 
     }
   }
   
