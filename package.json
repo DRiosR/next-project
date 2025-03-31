@@ -30,13 +30,5 @@
     "prisma": "^6.5.0",
     "tailwindcss": "^4.0.17",
     "typescript": "^5"
-  },
-    "extends": "next/core-web-vitals",
-    "rules": {
-      "@typescript-eslint/no-unused-vars": "off",
-      "no-unused-vars": "off"
-    }
   }
-  
-  
 }
