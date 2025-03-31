@@ -38,8 +38,8 @@ const register = async (req, res) => {
       });
 
       return res.status(201).json({ message: 'Usuario registrado exitosamente' });
-    } catch (error) {
-      // Capturar el error y devolver un mensaje genérico
+    } catch {
+      // No necesitamos capturar el error, solo devolver un mensaje genérico
       return res.status(500).json({ message: 'Error en el registro del usuario' });
     }
   } else {
