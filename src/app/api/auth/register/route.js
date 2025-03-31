@@ -3,49 +3,41 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const register = async (req, res) => {
-  if (req.method === 'POST') {
-    try {
-      // Desestructurar datos de la solicitud
-      const { username, email, password } = req.body;
+// Método POST para registro
+export async function POST(req, res) {
+  try {
+    const { username, email, password } = await req.json();
 
-      // Verificar que los campos no estén vacíos
-      if (!username || !email || !password) {
-        return res.status(400).json({ message: 'Todos los campos son requeridos' });
-      }
-
-      // Verificar si el usuario o correo ya existen
-      const existingUser = await prisma.user.findUnique({
-        where: {
-          email: email,
-        },
-      });
-
-      if (existingUser) {
-        return res.status(400).json({ message: 'El correo ya está registrado' });
-      }
-
-      // Encriptar la contraseña antes de guardarla
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Crear un nuevo usuario y devolver la respuesta directamente
-      await prisma.user.create({
-        data: {
-          username: username,
-          email: email,
-          password: hashedPassword,
-        },
-      });
-
-      return res.status(201).json({ message: 'Usuario registrado exitosamente' });
-    } catch {
-      // No necesitamos capturar el error, solo devolver un mensaje genérico
-      return res.status(500).json({ message: 'Error en el registro del usuario' });
+    // Verificar que los campos no estén vacíos
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: 'Todos los campos son requeridos' });
     }
-  } else {
-    // Si el método no es POST
-    return res.status(405).json({ message: 'Método no permitido' });
-  }
-};
 
-export default register;
+    // Verificar si el usuario o correo ya existen
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'El correo ya está registrado' });
+    }
+
+    // Encriptar la contraseña antes de guardarla
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crear un nuevo usuario
+    await prisma.user.create({
+      data: {
+        username: username,
+        email: email,
+        password: hashedPassword,
+      },
+    });
+
+    return res.status(201).json({ message: 'Usuario registrado exitosamente' });
+  } catch {
+    return res.status(500).json({ message: 'Error en el registro del usuario' });
+  }
+}
