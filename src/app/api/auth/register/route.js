@@ -1,8 +1,6 @@
 import bcrypt from 'bcrypt';
 import { prisma } from "@/lib/prisma"; // Conexión a la base de datos
 
-const prisma = new PrismaClient();
-
 // Método POST para registro
 export async function POST(req, res) {
   try {
