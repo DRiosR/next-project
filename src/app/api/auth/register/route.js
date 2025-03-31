@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"; // Conexión a la base de datos
 // Método POST para registro
 export async function POST(req, res) {
   try {
-    const { username, email, password } = await req.json();
+    const { username, email, password } = req.body;  // Usamos req.body en lugar de req.json()
 
     // Verificar que los campos no estén vacíos
     if (!username || !email || !password) {
@@ -35,7 +35,8 @@ export async function POST(req, res) {
     });
 
     return res.status(201).json({ message: 'Usuario registrado exitosamente' });
-  } catch {
+  } catch (error) {
+    console.error('Error al registrar el usuario:', error);  // Agregar detalles en consola
     return res.status(500).json({ message: 'Error en el registro del usuario' });
   }
 }

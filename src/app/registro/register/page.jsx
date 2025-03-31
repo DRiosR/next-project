@@ -1,6 +1,4 @@
-// src/app/registro/register/page.jsx
-
-"use client";  // Asegúrate de que el componente sea del lado del cliente
+"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -15,8 +13,16 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Verificación de la contraseña
     if (contraseña.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+
+    // Validación de correo electrónico
+    const isValidEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!isValidEmail.test(correo)) {
+      setError("Por favor, ingresa un correo electrónico válido.");
       return;
     }
 
