@@ -28,8 +28,8 @@ const register = async (req, res) => {
       // Encriptar la contraseña antes de guardarla
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Crear un nuevo usuario
-      const newUser = await prisma.user.create({
+      // Crear un nuevo usuario y devolver la respuesta directamente
+      await prisma.user.create({
         data: {
           username: username,
           email: email,
