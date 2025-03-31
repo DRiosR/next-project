@@ -1,11 +1,16 @@
-// src/app/page.jsx
-import React from 'react';
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default function Page() {
-  return (
-    <div>
-      <h1>Bienvenido a la página de inicio</h1>
-    </div>
-  );
+export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token"); // Simula autenticación
+    if (!token) {
+      router.push("/registro/login"); // Redirige al login si no hay sesión
+    }
+  }, []);
+
+  return <p>Redirigiendo...</p>;
 }
-cd 
